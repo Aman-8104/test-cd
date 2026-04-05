@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Upload</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bebas+Neue&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #101217;
+        --sand: #f3efe4;
+        --teal: #00a78e;
+        --sun: #f5b700;
+        --coral: #ff6b4a;
+        --card: rgba(255, 255, 255, 0.75);
+        --shadow: 0 20px 60px rgba(16, 18, 23, 0.16);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: 'Space Grotesk', sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 14% 18%, rgba(245, 183, 0, 0.35), transparent 35%),
+          radial-gradient(circle at 82% 24%, rgba(0, 167, 142, 0.3), transparent 34%),
+          radial-gradient(circle at 70% 80%, rgba(255, 107, 74, 0.25), transparent 42%),
+          linear-gradient(135deg, #f8f6ef 0%, #f0ebe0 45%, #ece6d8 100%);
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .panel {
+        width: min(760px, 100%);
+        background: var(--card);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(16, 18, 23, 0.08);
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        animation: rise 600ms ease-out;
+      }
+
+      .hero {
+        padding: 30px 28px 14px;
+      }
+
+      .kicker {
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: rgba(16, 18, 23, 0.72);
+      }
+
+      h1 {
+        margin: 10px 0 8px;
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: clamp(2.1rem, 7vw, 4.1rem);
+        letter-spacing: 0.03em;
+        line-height: 0.95;
+      }
+
+      .tagline {
+        margin: 0;
+        max-width: 52ch;
+        color: rgba(16, 18, 23, 0.8);
+      }
+
+      .content {
+        padding: 22px 28px 28px;
+      }
+
+      form {
+        display: grid;
+        gap: 14px;
+      }
+
+      .drop-zone {
+        border: 2px dashed rgba(16, 18, 23, 0.32);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.7);
+        padding: 28px 20px;
+        text-align: center;
+        transition: border-color 200ms, transform 200ms, background 200ms;
+      }
+
+      .drop-zone.dragover {
+        border-color: var(--teal);
+        transform: translateY(-1px);
+        background: rgba(0, 167, 142, 0.08);
+      }
+
+      .drop-zone p {
+        margin: 0;
+      }
+
+      .hint {
+        margin-top: 8px;
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
+
+      input[type='file'] {
+        display: block;
+        margin: 14px auto 0;
+      }
+
+      button {
+        border: 0;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--teal), #00806d);
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        cursor: pointer;
+        padding: 14px 18px;
+        font-size: 1rem;
+        transition: transform 160ms ease, filter 160ms ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.04);
+      }
+
+      button:disabled {
+        cursor: wait;
+        opacity: 0.75;
+      }
+
+      .result {
+        margin-top: 14px;
+        border-radius: 12px;
+        padding: 14px;
+        font-size: 0.95rem;
+        min-height: 52px;
+        background: rgba(16, 18, 23, 0.04);
+      }
+
+      .result.success {
+        background: rgba(0, 167, 142, 0.14);
+      }
+
+      .result.error {
+        background: rgba(255, 107, 74, 0.14);
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(18px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @media (max-width: 560px) {
+        .hero,
+        .content {
+          padding-left: 18px;
+          padding-right: 18px;
+        }
+
+        .drop-zone {
+          padding: 20px 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="panel">
+      <header class="hero">
+        <div class="kicker">FastAPI Demo</div>
+        <h1>Video Upload</h1>
+        <p class="tagline">
+          Drop a video file, upload it through the API, and get the saved filename back instantly.
+        </p>
+      </header>
+
+      <div class="content">
+        <form id="uploadForm">
+          <label class="drop-zone" id="dropZone">
+            <p><strong>Drag and drop a video here</strong> or choose manually</p>
+            <p class="hint">Accepted: any video/* format, max 200MB</p>
+            <input id="videoInput" name="video" type="file" accept="video/*" required />
+          </label>
+
+          <button id="submitBtn" type="submit">Upload Video</button>
+        </form>
+
+        <div class="result" id="result">No upload yet.</div>
+      </div>
+    </section>
+
+    <script>
+      const form = document.getElementById('uploadForm');
+      const input = document.getElementById('videoInput');
+      const result = document.getElementById('result');
+      const button = document.getElementById('submitBtn');
+      const dropZone = document.getElementById('dropZone');
+
+      function setResult(message, type) {
+        result.textContent = message;
+        result.classList.remove('success', 'error');
+        if (type) result.classList.add(type);
+      }
+
+      ;['dragenter', 'dragover'].forEach((eventName) => {
+        dropZone.addEventListener(eventName, (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          dropZone.classList.add('dragover');
+        });
+      });
+
+      ;['dragleave', 'drop'].forEach((eventName) => {
+        dropZone.addEventListener(eventName, (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          dropZone.classList.remove('dragover');
+        });
+      });
+
+      dropZone.addEventListener('drop', (event) => {
+        const files = event.dataTransfer.files;
+        if (files && files.length) {
+          input.files = files;
+        }
+      });
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        if (!input.files || !input.files[0]) {
+          setResult('Please choose a video file first.', 'error');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('video', input.files[0]);
+
+        button.disabled = true;
+        setResult('Uploading...', null);
+
+        try {
+          const response = await fetch('/api/upload-video', {
+            method: 'POST',
+            body: formData
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || data.detail || 'Upload failed.');
+          }
+
+          setResult(
+            `Uploaded successfully. File name: ${data.fileName}`,
+            'success'
+          );
+        } catch (error) {
+          setResult(error.message, 'error');
+        } finally {
+          button.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>
